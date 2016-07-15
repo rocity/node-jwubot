@@ -1,17 +1,25 @@
 var jsonfile = require('jsonfile');
+var _ = require('underscore');
+var moment = require('moment');
+
+var datafile = './data.json';
 
 function readDataFile(file) {
     jsonfile.readFile(file, function(err, obj) {
-        console.log("Reading File...");
-        for (var i = 0; i < obj.length; i++) {
-            console.log(obj[i])
-        }
-        console.log("End file read. //");
+        if (!err) { return obj; }
     });
 }
 
+function checkIfTweetIdExists(tid) {
+    var data = readDataFile(datafile);
+    var result = _.findWhere(data, {tweet_id: tid});
+
+    return result;
+}
+
 var jwucontroller = {
-    readDataFile: readDataFile
+    readDataFile: readDataFile,
+    checkIfTweetIdExists: checkIfTweetIdExists,
 }
 
 module.exports = jwucontroller
