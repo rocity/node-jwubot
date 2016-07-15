@@ -10,15 +10,20 @@ var controller  = require('./controller.js');
 var master = 'iamkvnpl';
 
 var t = new Twit({
-    consumer_key:         'mGBfltC2nuUtOI5udrucfhcpH'
-  , consumer_secret:      'WRuQFpmLUiiCJqhdgDn3cSO209rCqQWW5AsVIc54yx2MwYWU52'
-  , access_token:         '4432955655-Z009iaxOQuZ8wuYbC5Y1MXzQsHF0r5YxyKWAxrC'
-  , access_token_secret:  '3aFTtkjof6xFr8BiLS56reR7KHkT1gP9oRarM9kAZ2kwL'
+    consumer_key:         process.env.JWUBOT_TWIT_CONSUMER_KEY
+  , consumer_secret:      process.env.JWUBOT_TWIT_CONSUMER_SECRET
+  , access_token:         process.env.JWUBOT_TWIT_ACCESS_TOKEN
+  , access_token_secret:  process.env.JWUBOT_TWIT_ACCESS_TOKEN_SECRET
 });
 
 getMasterFollowers = function() {
     var ret = undefined;
-          t.get('statuses/user_timeline', { screen_name: 'iamkvnpl', count: 2 }, function(err, data, response) {
+
+    t.get('followers/ids', { screen_name: master },  function (err, data, response) {
+      if (data.ids) {
+        _.each(data.ids, function (theid) {
+          // loop thru each id
+          t.get('statuses/user_timeline', { user_id: theid, count: 2 }, function(err, data, response) {
             _.each(data, function(tweet) {
               var minutes_passed = moment().diff(tweet.created_at, 'minutes');
               var tid = tweet.id_str,
@@ -27,27 +32,43 @@ getMasterFollowers = function() {
               // if the tweet has been tweeted less than 30minutes ago, process it
               if (minutes_passed < 30) {
                 // judge if we send a reply to the tweet
-                var we_reply = controller.processTweet(tid, ttext);
-                
+                // var greeting = getGreetingTime(moment(tweet.created_at));
+                var we_rt = controller.processTweet(tid, ttext);
+
+                if (we_rt) {
+                  // go retweet!
+                  t.post('statuses/retweet/:id', { id: tid }, function (err, data, response) {
+                    console.log("Successfully retweeted " + tid);
+                  })
+                }
+
               }
             })
           })
-    // t.get('followers/ids', { screen_name: master },  function (err, data, response) {
-    //   if (data.ids) {
-    //     _.each(data.ids, function (theid) {
-
-    //     })
-    //   }
-    // });
+        })
+      }
+    });
 };
 
-// postTweet = function(botData, cb) {
-//     var list = []
-//     var rn = _.random(0, (list.length - 1));
-//     t.post('statuses/update', {status: list[rn].concat(' #CarteBlanche2015 #CarteBlancheDavao #CBMMF')}, function(err, data, response) {
-//       console.log('Tweet posted.');
-//     });
-// };
+function getGreetingTime (m) {
+  var g = null; //return g
+  
+  if(!m || !m.isValid()) { return; } //if we can't find a valid or filled moment, we return.
+  
+  var split_afternoon = 12 //24hr time to split the afternoon
+  var split_evening = 17 //24hr time to split the evening
+  var currentHour = parseFloat(m.format("HH"));
+  
+  if(currentHour >= split_afternoon && currentHour <= split_evening) {
+    g = "afternoon";
+  } else if(currentHour >= split_evening) {
+    g = "evening";
+  } else {
+    g = "morning";
+  }
+  
+  return g;
+}
 
 run = function() {
   async.waterfall([
@@ -59,31 +80,10 @@ run = function() {
   });
 };
 
-run();
-
-// tweetQuote = function() {
-//   async.waterfall([
-//     postTweet
-//   ],
-//   function(err, botData) {
-
-//   });
-// };
-
-// setInterval(function() {
-//   try {
-//     run();
-//   }
-//   catch (e) {
-//     console.log(e);
-//   }
-// }, 60000 * 3); // run every 3 minutes
-
-// setInterval(function() {
-//   try {
-//     tweetQuote();
-//   }
-//   catch (e) {
-//     console.log(e);
-//   }
-// }, 60000 * 30); // run every 30 minutes
+setInterval(function() {
+  try {
+    run();
+  } catch(e) {
+    console.log(e)
+  }
+}, 60000 * 10);

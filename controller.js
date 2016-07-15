@@ -36,11 +36,11 @@ function processTweet(tweet_id, tweet_text) {
         /*
             Check if tweet has our desired string
         */
-        var matches = tweet_text.match(/\b(oras)(.*)\b/ig);
+        var matches = tweet_text.match(/\b(jwu)(.*)\b/ig);
 
         if (matches) {
             // add to tweet_id to database
-            saveTweet(tweet_id);
+            // saveTweet(tweet_id);
             console.log("Tweet " + tweet_id + " added to datastore.");
 
             // tell Twit to reply on the status
