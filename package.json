@@ -1,0 +1,22 @@
+{
+  "name": "jwbot",
+  "version": "0.0.1",
+  "description": "A bot that replies to your JWU tweet!",
+  "main": "jwbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bot"
+  ],
+  "author": "Kevin Kalis",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^1.5.0",
+    "jsonfile": "^2.3.1",
+    "node-rest-client": "^1.5.1",
+    "twit": "^2.1.1",
+    "wordfilter": "^0.2.5",
+    "jsonfile": "^2.3.1"
+  }
+}
