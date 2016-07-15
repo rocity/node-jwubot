@@ -79,10 +79,11 @@ run = function() {
   });
 };
 
-setInterval(function() {
-  try {
-    run();
-  } catch(e) {
-    console.log(e)
-  }
-}, 60000 * 10);
+run();
+// setInterval(function() {
+//   try {
+//     run();
+//   } catch(e) {
+//     console.log(e)
+//   }
+// }, 60000 * 10);
