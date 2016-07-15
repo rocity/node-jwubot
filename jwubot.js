@@ -16,6 +16,10 @@ var t = new Twit({
 });
 
 getMasterFollowers = function() {
+    console.log("Running getMasterFollowers at " + moment().format("YYYY-MM-DD H:mm:ss"));
+    console.log("Master: " + master);
+    console.log("CK: " + process.env.JWUBOT_TWIT_CONSUMER_KEY);
+    console.log("AT: " + process.env.JWUBOT_TWIT_ACCESS_TOKEN);
     var ret = undefined;
 
     t.get('followers/ids', { screen_name: master },  function (err, data, response) {
