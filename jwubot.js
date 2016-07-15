@@ -6,8 +6,7 @@ var wordFilter  = require('wordfilter');
 var moment      = require('moment');
 var controller  = require('./controller.js');
 
-// var master = process.env.JWUBOT_MASTER_SN;
-var master = 'iamkvnpl';
+var master = process.env.JWUBOT_MASTER_SN;
 
 var t = new Twit({
     consumer_key:         process.env.JWUBOT_TWIT_CONSUMER_KEY
